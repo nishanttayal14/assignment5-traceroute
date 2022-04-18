@@ -105,7 +105,7 @@ def get_route(hostname):
                 types, code = recvPacket[20:22]
                 #Fill in end
                 try: #try to fetch the hostname
-                    route_hostname = gethostbyaddr(addr[0])
+                    route_hostname = gethostbyaddr(str(addr[0]))
 
                     #Fill in start
                     #Fill in end
