@@ -21,13 +21,13 @@ def checksum(string):
     count = 0
 
     while count < countTo:
-        thisVal = (string[count + 1]) * 256 + (string[count])
+        thisVal = ord(string[count + 1]) * 256 + ord(string[count])
         csum = csum + thisVal
         csum = csum & 0xffffffff
         count = count + 2
 
     if countTo < len(string):
-        csum = csum + (string[len(string) - 1])
+        csum = csum + ord(string[len(string) - 1])
         csum = csum & 0xffffffff
 
     csum = (csum >> 16) + (csum & 0xffff)
