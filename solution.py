@@ -21,13 +21,13 @@ def checksum(string):
     count = 0
 
     while count < countTo:
-        thisVal = ord(string[count + 1]) * 256 + ord(string[count])
+        thisVal = (string[count + 1]) * 256 + (string[count])
         csum = csum + thisVal
         csum = csum & 0xffffffff
         count = count + 2
 
     if countTo < len(string):
-        csum = csum + ord(string[len(string) - 1])
+        csum = csum + (string[len(string) - 1])
         csum = csum & 0xffffffff
 
     csum = (csum >> 16) + (csum & 0xffff)
@@ -49,10 +49,7 @@ def build_packet():
     header = struct.pack("bbHh", ICMP_ECHO_REQUEST, 0, check_sum, 1)
     data = struct.pack("d", time.time())
     check_sum = checksum(str(header + data))
-    if sys.platform == 'darwin':
-        check_sum = htons(check_sum) & 0xffff
-    else:
-        check_sum = htons(check_sum)
+    check_sum = htons(check_sum)
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, check_sum, (os.getpid() & 0xFFFF), 1)
     # Don’t send the packet yet , just return the final packet in this function.
     #Fill in end
