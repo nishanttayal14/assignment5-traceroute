@@ -46,13 +46,15 @@ def build_packet():
     # Make the header in a similar way to the ping exercise.
     # Append checksum to the header.
     check_sum = 0
-    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, check_sum,(os.getpid() & 0xFFFF), 1)
+    pid = (os.getpid() & 0xFFFF)
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, check_sum,pid, 1)
     data = struct.pack("d", time.time())
     check_sum = checksum(header + data)
     if sys.platform == 'darwin':
         check_sum = htons(check_sum) & 0xffff
     else:
         check_sum = htons(check_sum)
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, check_sum, pid, 1)
     # Don’t send the packet yet , just return the final packet in this function.
     #Fill in end
 
@@ -71,7 +73,7 @@ def get_route(hostname):
         tracelist1 = []
         for tries in range(TRIES):
             #destAddr = gethostbyname(hostname)
-
+            print(targetAddr)
             #Fill in start
             # Make a raw socket named mySocket
             mySocket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)
@@ -110,8 +112,9 @@ def get_route(hostname):
             else:
                 #Fill in start
                 #Fetch the icmp type from the IP packet
-                icmpHeaderData = recvPacket[20:28]
-                types, code, checksum, packetID, sequence = struct.unpack("bbHHh", icmpHeaderData)
+                #icmpHeaderData = recvPacket[20:28]
+                #types, code, checksum, packetID, sequence = struct.unpack("bbHHh", icmpHeaderData)
+                types,code = recvPacket[20:22]
                 #Fill in end
                 try: #try to fetch the hostname
                     route_hostname = gethostbyaddr(addr[0])[0]
@@ -169,6 +172,6 @@ def get_route(hostname):
                 break
             finally:
                 mySocket.close()
-
+    return tracelist2
 if __name__ == '__main__':
-    print(get_route("google.co.il"))
+    print(get_route("bing.com"))
